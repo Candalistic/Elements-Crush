@@ -2,7 +2,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * <h1>Grid</h1>
@@ -18,6 +21,9 @@ public class Grid {
 	private Element[][] elements;
 	private Random rnd;
 
+	/**
+	 * The default constructor of the class. Creates the grid of the size 10x10.
+	 */
 	public Grid() {
 		rnd = new Random();
 		cols = 10;
@@ -52,30 +58,92 @@ public class Grid {
 	 * @see fillRow(), Element
 	 */
 	public void fillGrid() {
-		// filling the grid row by row
-		for (int i = 0; i < rows; i++) {
-			fillRow(i);
-		}
-		// removing all vertical lines of 3 or more elements in the grid
-		for (int j = 0; j < cols; j++)
-			for (int i = 2; i < rows; i++){
-				while (elements[i][j].equals(elements[i - 1][j])
-						&& elements[i][j].equals(elements[i - 2][j])) {
-					int type=elements[i][j].getType();
-					int typeWest=-1, typeEast=-1,typeCenter=-1;
-					if(j>=2 && elements[i][j-2].equals(elements[i][j-1]))
-						typeWest=elements[i][j-1].getType();
-					if(j<cols-2 && elements[i][j+1].equals(elements[i][j+2]))
-						typeEast=elements[i][j+1].getType();
-					if(j>0 && j<cols-1 && elements[i][j-1].equals(elements[i][j+1]))
-						typeCenter=elements[i][j+1].getType();
-					elements[i][j]=generateElement(elements[i][j].getX(),elements[i][j].getY());
-					while(elements[i][j].getType()==type || elements[i][j].getType()==typeWest ||
-							elements[i][j].getType()==typeEast || elements[i][j].getType()==typeCenter)
-						elements[i][j]=generateElement(elements[i][j].getX(),elements[i][j].getY());
-						
-				}
+		for(int i=0; i< rows; i++)
+			for(int j=0; j<cols; j++)
+				elements[i][j] = new EmptyElement(0,0);
+		int x = 400;
+		int y = 150;
+		// filling the grid element by element
+		for(int i=0; i< rows; i++){
+			for(int j=0; j< cols; j++){
+				ArrayList<Integer> options = getOptions(i, j);
+				while(options.contains(Element.EMPTY))
+					options.remove(Integer.valueOf(Element.EMPTY));
+				int choice = rnd.nextInt(options.size());
+				generateElement(x, y, options.get(choice));
+				x+=50;
 			}
+			y+=50;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param i
+	 * @param j
+	 * @return
+	 */
+	private ArrayList<Integer> getOptions(int i, int j){
+		ArrayList<Integer> options = new ArrayList<Integer>();
+		options.add(Element.EARTH);
+		options.add(Element.ELECTRICITY);
+		options.add(Element.FIRE);
+		options.add(Element.ICE);
+		options.add(Element.WATER);
+		options.add(Element.WIND);
+		int length_north, length_south, length_west, length_east;
+		if(i<2)
+			length_north = i;
+		else
+			length_north = 2;
+		
+		if(rows - i - 1 <2)
+			length_south = i;
+		else
+			length_south = 2;
+		
+		if(j<2)
+			length_west = j;
+		else
+			length_west = 2;
+		
+		if(cols - j - 1 < 2)
+			length_east = cols - j - 1;
+		else
+			length_east = 2;
+		
+		int index = 0;
+		while(index < options.size()){
+			for(int row_index = i-length_west+2; row_index < i+length_east+1; row_index++)
+				if(isCompleteSequence(elements[row_index][j], elements[row_index-1][j], elements[row_index-2][j])){
+					System.out.println(row_index);
+					options.set(index, Element.EMPTY);
+					break;
+				}
+			index++;
+			}
+		index = 0;
+		while(index < options.size()){
+				for(int col_index = i-length_north+2; col_index < i+length_south+1; col_index++)
+					if(isCompleteSequence(elements[col_index][j], elements[col_index-1][j], elements[col_index-2][j])){
+						options.set(index, Element.EMPTY);
+						break;
+					}
+			index++;
+		}
+			
+		return options;
+	}
+	/**
+	 * A helper method for fillGrid(). Determines whether the given 3 elements are of the same type.
+	 * @param e1 the first element
+	 * @param e2 the second element
+	 * @param e3 the third element
+	 * @return boolean <p>
+	 * Returns true if elements are of the same type, false otherwise.
+	 */
+	private boolean isCompleteSequence(Element e1, Element e2, Element e3){
+		return e1.equals(e2) && e1.equals(e3);
 	}
 
 	/**
@@ -225,6 +293,41 @@ public class Grid {
 	 */
 	public Element generateElement(int x, int y) {
 		int choice = rnd.nextInt(6);
+		Element e;
+		switch (choice) {
+		case Element.FIRE:
+			e = new FireElement(x, y);
+			break;
+		case Element.WATER:
+			e = new WaterElement(x, y);
+			break;
+		case Element.EARTH:
+			e = new EarthElement(x, y);
+			break;
+		case Element.WIND:
+			e = new WindElement(x, y);
+			break;
+		case Element.ICE:
+			e = new IceElement(x, y);
+			break;
+		default:
+			e = new ElectricityElement(x, y);
+			break;
+		}
+		return e;
+	}
+	
+	/**
+	 * <h1>generateElement</h1>
+	 * Creates and returns the element of a specified type.
+	 * @param x this is the row index for which element will be generated.
+	 * @param y this is the column index for which element will be generated.
+	 * @param t type of the element to be generated.
+	 * @return Element the generated element.
+	 * @see Element
+	 */
+	public Element generateElement(int x, int y, int t) {
+		int choice = t;
 		Element e;
 		switch (choice) {
 		case Element.FIRE:

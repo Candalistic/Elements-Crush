@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class EarthElement extends Element {
-	public EarthElement() {
-
-	}
 
 	public EarthElement(int x, int y) {
 		super(x, y);

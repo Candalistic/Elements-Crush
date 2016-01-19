@@ -1,9 +1,6 @@
 import javax.swing.ImageIcon;
 
 public class ElectricityElement extends Element {
-	public ElectricityElement() {
-
-	}
 
 	public ElectricityElement(int x, int y) {
 		super(x, y);

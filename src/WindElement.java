@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class WindElement extends Element {
-	public WindElement() {
-
-	}
 
 	public WindElement(int x, int y) {
 		super(x, y);

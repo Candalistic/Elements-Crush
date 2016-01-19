@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class FireElement extends Element {
-	public FireElement() {
-
-	}
 
 	public FireElement(int x, int y) {
 		super(x, y);

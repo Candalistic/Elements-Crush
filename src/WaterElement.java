@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class WaterElement extends Element {
-	public WaterElement() {
-
-	}
 
 	public WaterElement(int x, int y) {
 		super(x, y);

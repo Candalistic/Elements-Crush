@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class IceElement extends Element {
-	public IceElement() {
-
-	}
 
 	public IceElement(int x, int y) {
 		super(x, y);
