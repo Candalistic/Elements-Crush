@@ -1,6 +1,17 @@
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
+/**
+ * <h1>Grid</h1>
+ * The implementation of a class responsible for creating, keeping and managing the gaming grid.
+ * <p>
+ * Also keeps track of the score.
+ * @author Dmitry Ten
+ * @since May 2015
+ */
 public class Grid {
 	private int cols, rows;
 	private int score;
@@ -32,6 +43,14 @@ public class Grid {
 			}
 	}
 
+	/** 
+	 * <h1>fillGrid</h1>
+	 * A method that fills every cell of the random elements.
+	 * First, every row is randomly filled using the method fillRow, then every cell is checked to verify
+	 * that there are no 3 elements of the same type in the row initially.
+	 * @return void 
+	 * @see fillRow(), Element
+	 */
 	public void fillGrid() {
 		// filling the grid row by row
 		for (int i = 0; i < rows; i++) {
@@ -59,7 +78,13 @@ public class Grid {
 			}
 	}
 
-	// fill row r with random elements
+	/**
+	 * <h1>fillRow</h1>
+	 * Fills the specified row with random elements.
+	 * @param r This is the row which will be filled.
+	 * @return void
+	 * @see Element
+	 */
 	public void fillRow(int r) {
 		int x = 400;
 		for (int j = 0; j < cols; j++) {
@@ -72,7 +97,15 @@ public class Grid {
 		}
 	}
 
-	// filling row r with elements of type t
+	/**
+	 * <h1>fillRow</h1>
+	 * Fills the specified row with the elements of specified type.
+	 * @param r This is the row which will be filled.
+	 * @param t This is the type of element with which the row will be filled. For the possible types,
+	 * see Element
+	 * @return void
+	 * @see Element
+	 */
 	public void fillRow(int r, int t) {
 		int x = 400;
 		int y = 150 + r * 50;
@@ -101,7 +134,13 @@ public class Grid {
 		}
 	}
 
-	// filling column c with random elements
+	/**
+	 * <h1>fillCol</h1>
+	 * Fills the specified column with random elements.
+	 * @param c This is the column which will be filled.
+	 * @return void
+	 * @see Element
+	 */
 	public void fillCol(int c) {
 		int x = 400 + c * 50;
 		int y = 150;
@@ -115,7 +154,15 @@ public class Grid {
 		}
 	}
 
-	// filling column c with elements of type t
+	/**
+	 * <h1>fillCol</h1>
+	 * Fills the specified column with the elements of specified type.
+	 * @param r This is the column which will be filled.
+	 * @param t This is the type of element with which the column will be filled. For the possible types,
+	 * see Element
+	 * @return void
+	 * @see Element
+	 */
 	public void fillCol(int c, int t) {
 		int x = 400 + c * 50;
 		int y = 150;
@@ -144,26 +191,38 @@ public class Grid {
 		}
 	}
 
+	/**
+	 * <h1>reassign</h1>
+	 * Shuffles the grid.
+	 * <p>
+	 * @return void
+	 * @see Element, Collections
+	 */
 	public void reassign() {
-		for (int i = 0; i < rows; i++)
-			for (int j = 0; j < cols; j++) {
-				int x = rnd.nextInt(rows);
-				int y = rnd.nextInt(cols);
-				int x1 = elements[i][j].getX();
-				int y1 = elements[i][j].getY();
-				int x2 = elements[x][y].getX();
-				int y2 = elements[x][y].getY();
-				Element tmp = elements[i][j];
-				elements[i][j] = elements[x][y];
-				elements[i][j].setX(x1);
-				elements[i][j].setY(y1);
-				elements[x][y] = tmp;
-				elements[x][y].setX(x2);
-				elements[x][y].setY(y2);
+		// First, copy every value of elements into the one dimensional array.
+		ArrayList<Element> temp_list = new ArrayList<>(rows*cols);
+		for(Element[] row: elements)
+			for(Element el: row){
+				temp_list.add(el);
+			}
+		// Shuffle the resulting array.
+		Collections.shuffle(temp_list);
+		// Refill the grid.
+		int index = 0;
+		for(int i=0; i<rows; i++)
+			for(int j=0; j<cols; j++){
+				elements[i][j] = temp_list.get(index);
+				index++;
 			}
 	}
 
-	//returns element of random type
+	/**
+	 * <h1>generateElement</h1>
+	 * Creates and returns the element of a random type.
+	 * @param x this is the row index for which element will be generated.
+	 * @param y this is the column index for which element will be generated.
+	 * @return Element the generated element.
+	 */
 	public Element generateElement(int x, int y) {
 		int choice = rnd.nextInt(6);
 		Element e;
