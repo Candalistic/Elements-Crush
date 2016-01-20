@@ -2,13 +2,17 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
- * <h1>Grid</h1>
- * The implementation of a class responsible for creating, keeping and managing the gaming grid.
+ * <h1>public class Grid</h1> The implementation of a class responsible for
+ * creating, keeping and managing the gaming grid.
  * <p>
  * Also keeps track of the score.
+ * 
  * @author Dmitry Ten
  * @since May 2015
  */
@@ -18,6 +22,9 @@ public class Grid {
 	private Element[][] elements;
 	private Random rnd;
 
+	/**
+	 * The default constructor of the class. Creates the grid of the size 10x10.
+	 */
 	public Grid() {
 		rnd = new Random();
 		cols = 10;
@@ -27,6 +34,15 @@ public class Grid {
 		fillGrid();
 	}
 
+	/**
+	 * The constructor of the class. Creates grid with the specified number of
+	 * rows and columns.
+	 * 
+	 * @param r
+	 *            the number of rows in the grid.
+	 * @param c
+	 *            the number of columns in the grid.
+	 */
 	public Grid(int r, int c) {
 		rnd = new Random();
 		cols = c;
@@ -36,6 +52,13 @@ public class Grid {
 		fillGrid();
 	}
 
+	/**
+	 * Draws every element of the grid on the screen by calling the draw()
+	 * method of each element.
+	 * 
+	 * @param g2
+	 * @return void
+	 */
 	public void draw(Graphics2D g2) {
 		for (Element[] r : elements)
 			for (Element e : r) {
@@ -43,45 +66,146 @@ public class Grid {
 			}
 	}
 
-	/** 
-	 * <h1>fillGrid</h1>
-	 * A method that fills every cell of the random elements.
-	 * First, every row is randomly filled using the method fillRow, then every cell is checked to verify
-	 * that there are no 3 elements of the same type in the row initially.
-	 * @return void 
+	public String toString(){
+		String grid = "";
+		for(Element [] r: elements){
+			for(Element e: r)
+				grid += e + " ";
+			grid += "\n";
+		}
+		return grid;
+	}
+	/**
+	 * A method that fills every cell with the random elements. 
+	 * Used to initialize the grid in order to start the game.
+	 * 
+	 * @return void
 	 * @see fillRow(), Element
 	 */
 	public void fillGrid() {
-		// filling the grid row by row
+		// Initializing the grid with template empty elements.
+		for (int i = 0; i < rows; i++)
+			for (int j = 0; j < cols; j++)
+				elements[i][j] = new EmptyElement(0, 0);
+		int x = 400;
+		int y = 150;
+		// filling the grid element by element
 		for (int i = 0; i < rows; i++) {
-			fillRow(i);
-		}
-		// removing all vertical lines of 3 or more elements in the grid
-		for (int j = 0; j < cols; j++)
-			for (int i = 2; i < rows; i++){
-				while (elements[i][j].equals(elements[i - 1][j])
-						&& elements[i][j].equals(elements[i - 2][j])) {
-					int type=elements[i][j].getType();
-					int typeWest=-1, typeEast=-1,typeCenter=-1;
-					if(j>=2 && elements[i][j-2].equals(elements[i][j-1]))
-						typeWest=elements[i][j-1].getType();
-					if(j<cols-2 && elements[i][j+1].equals(elements[i][j+2]))
-						typeEast=elements[i][j+1].getType();
-					if(j>0 && j<cols-1 && elements[i][j-1].equals(elements[i][j+1]))
-						typeCenter=elements[i][j+1].getType();
-					elements[i][j]=generateElement(elements[i][j].getX(),elements[i][j].getY());
-					while(elements[i][j].getType()==type || elements[i][j].getType()==typeWest ||
-							elements[i][j].getType()==typeEast || elements[i][j].getType()==typeCenter)
-						elements[i][j]=generateElement(elements[i][j].getX(),elements[i][j].getY());
-						
-				}
+			for (int j = 0; j < cols; j++) {
+				ArrayList<Integer> options = getOptions(i, j);
+				while (options.contains(Element.EMPTY))
+					options.remove(Integer.valueOf(Element.EMPTY));
+				int choice = rnd.nextInt(options.size());
+				elements[i][j] = generateElement(x, y, options.get(choice));
+				x += 50;
 			}
+			y += 50;
+			x = 400;
+		}
 	}
 
 	/**
-	 * <h1>fillRow</h1>
+	 * A helper method for fillGrid(). Returns the ArrayList with identifiers of
+	 * legal elements
+	 * <p>
+	 * for the specified cell in the grid.
+	 * 
+	 * @param i
+	 *            the row in the grid.
+	 * @param j
+	 *            the column in the grid.
+	 * @return ArrayList<Integer> The list of identifiers for allowed elements.
+	 */
+	private ArrayList<Integer> getOptions(int i, int j) {
+		ArrayList<Integer> options = new ArrayList<Integer>();
+		options.add(Element.EARTH);
+		options.add(Element.ELECTRICITY);
+		options.add(Element.FIRE);
+		options.add(Element.ICE);
+		options.add(Element.WATER);
+		options.add(Element.WIND);
+		int length_north, length_south, length_west, length_east;
+		if (i < 2)
+			length_north = i;
+		else
+			length_north = 2;
+
+		if (rows - i - 1 < 2)
+			length_south = rows - i - 1;
+		else
+			length_south = 2;
+
+		if (j < 2)
+			length_west = j;
+		else
+			length_west = 2;
+
+		if (cols - j - 1 < 2)
+			length_east = cols - j - 1;
+		else
+			length_east = 2;
+
+		// Saving the initial state of the element, to reverse back to it at the end of the method.
+		Element initial_state = elements[i][j];
+		
+		int index = 0;
+		if(options.get(index) != Element.EMPTY)
+		while (index < options.size()) {
+			//Setting elements[i][j] to the element of the checked type.
+			elements[i][j] = generateElement(0, 0, options.get(index));
+			for (int row_index = i - length_north + 2; row_index <= i
+					+ length_south; row_index++)
+				if (isCompleteSequence(elements[row_index][j],
+						elements[row_index - 1][j], elements[row_index - 2][j])) {
+					options.set(index, Element.EMPTY);
+					break;
+				}
+			index++;
+		}
+		index = 0;
+		if(options.get(index) != Element.EMPTY)
+		while (index < options.size()) {
+			elements[i][j] = generateElement(0, 0, options.get(index));
+			for (int col_index = j - length_west + 2; col_index <= j
+					+ length_east; col_index++)
+				if (isCompleteSequence(elements[i][col_index],
+						elements[i][col_index - 1], elements[i][col_index - 2])) {
+					options.set(index, Element.EMPTY);
+					break;
+				}
+			index++;
+		}
+
+		//for (Integer el : options)
+		//	System.out.println(el);
+
+		elements[i][j] = initial_state;
+		return options;
+	}
+
+	/**
+	 * A helper method for fillGrid(). Determines whether the given 3 elements
+	 * are of the same type.
+	 * 
+	 * @param e1
+	 *            the first element
+	 * @param e2
+	 *            the second element
+	 * @param e3
+	 *            the third element
+	 * @return boolean
+	 *         <p>
+	 *         Returns true if elements are of the same type, false otherwise.
+	 */
+	private boolean isCompleteSequence(Element e1, Element e2, Element e3) {
+		return e1.equals(e2) && e1.equals(e3);
+	}
+
+	/**
 	 * Fills the specified row with random elements.
-	 * @param r This is the row which will be filled.
+	 * 
+	 * @param r
+	 *            This is the row which will be filled.
 	 * @return void
 	 * @see Element
 	 */
@@ -90,7 +214,7 @@ public class Grid {
 		for (int j = 0; j < cols; j++) {
 			elements[r][j] = generateElement(x, 150 + r * 50);
 			while (j >= 2 && elements[r][j].equals(elements[r][j - 1])
-					&& elements[r][j].equals(elements[r][j - 2])){
+					&& elements[r][j].equals(elements[r][j - 2])) {
 				elements[r][j] = generateElement(x, 150 + r * 50);
 			}
 			x += 50;
@@ -98,11 +222,13 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>fillRow</h1>
 	 * Fills the specified row with the elements of specified type.
-	 * @param r This is the row which will be filled.
-	 * @param t This is the type of element with which the row will be filled. For the possible types,
-	 * see Element
+	 * 
+	 * @param r
+	 *            This is the row which will be filled.
+	 * @param t
+	 *            This is the type of element with which the row will be filled.
+	 *            For the possible types, see Element
 	 * @return void
 	 * @see Element
 	 */
@@ -135,9 +261,10 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>fillCol</h1>
 	 * Fills the specified column with random elements.
-	 * @param c This is the column which will be filled.
+	 * 
+	 * @param c
+	 *            This is the column which will be filled.
 	 * @return void
 	 * @see Element
 	 */
@@ -155,11 +282,13 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>fillCol</h1>
 	 * Fills the specified column with the elements of specified type.
-	 * @param r This is the column which will be filled.
-	 * @param t This is the type of element with which the column will be filled. For the possible types,
-	 * see Element
+	 * 
+	 * @param r
+	 *            This is the column which will be filled.
+	 * @param t
+	 *            This is the type of element with which the column will be
+	 *            filled. For the possible types, see Element
 	 * @return void
 	 * @see Element
 	 */
@@ -192,35 +321,37 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>reassign</h1>
-	 * Shuffles the grid.
+	 * Method that shuffles the grid.
 	 * <p>
+	 * 
 	 * @return void
 	 * @see Element, Collections
 	 */
 	public void reassign() {
 		// First, copy every value of elements into the one dimensional array.
-		ArrayList<Element> temp_list = new ArrayList<>(rows*cols);
-		for(Element[] row: elements)
-			for(Element el: row){
+		ArrayList<Element> temp_list = new ArrayList<>(rows * cols);
+		for (Element[] row : elements)
+			for (Element el : row) {
 				temp_list.add(el);
 			}
 		// Shuffle the resulting array.
 		Collections.shuffle(temp_list);
 		// Refill the grid.
 		int index = 0;
-		for(int i=0; i<rows; i++)
-			for(int j=0; j<cols; j++){
+		for (int i = 0; i < rows; i++)
+			for (int j = 0; j < cols; j++) {
 				elements[i][j] = temp_list.get(index);
 				index++;
 			}
 	}
 
 	/**
-	 * <h1>generateElement</h1>
 	 * Creates and returns the element of a random type.
-	 * @param x this is the row index for which element will be generated.
-	 * @param y this is the column index for which element will be generated.
+	 * 
+	 * @param x
+	 *            this is the row index for which element will be generated.
+	 * @param y
+	 *            this is the column index for which element will be generated.
 	 * @return Element the generated element.
 	 */
 	public Element generateElement(int x, int y) {
@@ -249,6 +380,49 @@ public class Grid {
 		return e;
 	}
 
+	/**
+	 * Creates and returns the element of a specified type.
+	 * 
+	 * @param x
+	 *            this is the row index for which element will be generated.
+	 * @param y
+	 *            this is the column index for which element will be generated.
+	 * @param t
+	 *            type of the element to be generated.
+	 * @return Element the generated element.
+	 * @see Element
+	 */
+	public Element generateElement(int x, int y, int t) {
+		int choice = t;
+		Element e;
+		switch (choice) {
+		case Element.FIRE:
+			e = new FireElement(x, y);
+			break;
+		case Element.WATER:
+			e = new WaterElement(x, y);
+			break;
+		case Element.EARTH:
+			e = new EarthElement(x, y);
+			break;
+		case Element.WIND:
+			e = new WindElement(x, y);
+			break;
+		case Element.ICE:
+			e = new IceElement(x, y);
+			break;
+		default:
+			e = new ElectricityElement(x, y);
+			break;
+		}
+		return e;
+	}
+
+	
+	public int findSequenceLength(){
+		int length = 1;
+		return length;
+	}
 	// finding all lines for deletion
 	public boolean findLine() {
 		boolean isLine = false;
@@ -768,10 +942,22 @@ public class Grid {
 		}
 	}
 
+	/**
+	 * A getter method for the score.
+	 * 
+	 * @return int returns the score.
+	 */
 	public int getScore() {
 		return score;
 	}
 
+	/**
+	 * A setter method for the score.
+	 * 
+	 * @param s
+	 *            int
+	 * @return void
+	 */
 	public void setScore(int s) {
 		score = s;
 	}

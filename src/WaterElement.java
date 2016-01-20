@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class WaterElement extends Element {
-	public WaterElement() {
-
-	}
 
 	public WaterElement(int x, int y) {
 		super(x, y);
@@ -19,5 +16,10 @@ public class WaterElement extends Element {
 		setType(Element.EMPTY);
 		setImage(new ImageIcon("images\\tsunami.png"));
 
+	}
+
+	@Override
+	public String toString() {
+		return "Water";
 	}
 }

@@ -1,9 +1,6 @@
 import javax.swing.ImageIcon;
 
 public class ElectricityElement extends Element {
-	public ElectricityElement() {
-
-	}
 
 	public ElectricityElement(int x, int y) {
 		super(x, y);
@@ -19,5 +16,10 @@ public class ElectricityElement extends Element {
 		setType(Element.EMPTY);
 		setImage(new ImageIcon("images\\thunderstorm.png"));
 
+	}
+
+	@Override
+	public String toString() {
+		return "Elect";
 	}
 }

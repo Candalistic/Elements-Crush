@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class WindElement extends Element {
-	public WindElement() {
-
-	}
 
 	public WindElement(int x, int y) {
 		super(x, y);
@@ -18,5 +15,10 @@ public class WindElement extends Element {
 	public void animation() {
 		setType(Element.EMPTY);
 		setImage(new ImageIcon("images\\tornado.png"));
+	}
+
+	@Override
+	public String toString() {
+		return "Wind ";
 	}
 }

@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class IceElement extends Element {
-	public IceElement() {
-
-	}
 
 	public IceElement(int x, int y) {
 		super(x, y);
@@ -19,5 +16,10 @@ public class IceElement extends Element {
 		setType(Element.EMPTY);
 		setImage(new ImageIcon("images\\snowstorm.png"));
 
+	}
+
+	@Override
+	public String toString() {
+		return " Ice ";
 	}
 }

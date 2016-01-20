@@ -72,4 +72,11 @@ public class SpecialElement extends Element {
 			System.err.println(e);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Special";
+	}
+	
+	
 }

@@ -1,9 +1,6 @@
 import javax.swing.*;
 
 public class EarthElement extends Element {
-	public EarthElement() {
-
-	}
 
 	public EarthElement(int x, int y) {
 		super(x, y);
@@ -19,5 +16,10 @@ public class EarthElement extends Element {
 		setType(Element.EMPTY);
 		setImage(new ImageIcon("images\\earthquake.png"));
 
+	}
+	
+	@Override
+	public String toString(){
+		return "Earth";
 	}
 }
