@@ -17,4 +17,9 @@ public class EarthElement extends Element {
 		setImage(new ImageIcon("images\\earthquake.png"));
 
 	}
+	
+	@Override
+	public String toString(){
+		return "Earth";
+	}
 }

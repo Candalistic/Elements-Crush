@@ -34,6 +34,8 @@ public abstract class Element {
 	}
 
 	public abstract void animation();
+	
+	public abstract String toString();
 
 	public ImageIcon getImage() {
 		return img;

@@ -17,4 +17,9 @@ public class IceElement extends Element {
 		setImage(new ImageIcon("images\\snowstorm.png"));
 
 	}
+
+	@Override
+	public String toString() {
+		return " Ice ";
+	}
 }

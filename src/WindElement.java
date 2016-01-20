@@ -16,4 +16,9 @@ public class WindElement extends Element {
 		setType(Element.EMPTY);
 		setImage(new ImageIcon("images\\tornado.png"));
 	}
+
+	@Override
+	public String toString() {
+		return "Wind ";
+	}
 }

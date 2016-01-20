@@ -17,4 +17,9 @@ public class ElectricityElement extends Element {
 		setImage(new ImageIcon("images\\thunderstorm.png"));
 
 	}
+
+	@Override
+	public String toString() {
+		return "Elect";
+	}
 }

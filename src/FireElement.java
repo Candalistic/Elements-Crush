@@ -17,4 +17,9 @@ public class FireElement extends Element {
 		setImage(new ImageIcon("images\\volcano.png"));
 	}
 
+	@Override
+	public String toString() {
+		return "Fire ";
+	}
+
 }

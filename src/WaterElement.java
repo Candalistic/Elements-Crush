@@ -17,4 +17,9 @@ public class WaterElement extends Element {
 		setImage(new ImageIcon("images\\tsunami.png"));
 
 	}
+
+	@Override
+	public String toString() {
+		return "Water";
+	}
 }

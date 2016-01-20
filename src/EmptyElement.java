@@ -16,4 +16,9 @@ public class EmptyElement extends Element {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "Empty";
+	}
+
 }
