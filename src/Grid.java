@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * <h1>Grid</h1>
+ * <h1>public class Grid</h1>
  * The implementation of a class responsible for creating, keeping and managing the gaming grid.
  * <p>
  * Also keeps track of the score.
@@ -33,6 +33,11 @@ public class Grid {
 		fillGrid();
 	}
 
+	/**
+	 * The constructor of the class. Creates grid with the specified number of rows and columns.
+	 * @param r the number of rows in the grid.
+	 * @param c the number of columns in the grid.
+	 */
 	public Grid(int r, int c) {
 		rnd = new Random();
 		cols = c;
@@ -78,10 +83,12 @@ public class Grid {
 	}
 	
 	/**
-	 * 
-	 * @param i
-	 * @param j
-	 * @return
+	 * A helper method for fillGrid(). Returns the ArrayList with identifiers of legal elements
+	 * <p>
+	 * for the specified cell in the grid.
+	 * @param i the row in the grid.
+	 * @param j the column in the grid.
+	 * @return ArrayList<Integer> The list of identifiers for allowed elements.
 	 */
 	private ArrayList<Integer> getOptions(int i, int j){
 		ArrayList<Integer> options = new ArrayList<Integer>();
@@ -97,8 +104,8 @@ public class Grid {
 		else
 			length_north = 2;
 		
-		if(rows - i - 1 <2)
-			length_south = i;
+		if(rows - i - 1 < 2)
+			length_south = rows - i - 1;
 		else
 			length_south = 2;
 		
@@ -114,9 +121,8 @@ public class Grid {
 		
 		int index = 0;
 		while(index < options.size()){
-			for(int row_index = i-length_west+2; row_index < i+length_east+1; row_index++)
+			for(int row_index = i-length_west; row_index < i+length_east; row_index++)
 				if(isCompleteSequence(elements[row_index][j], elements[row_index-1][j], elements[row_index-2][j])){
-					System.out.println(row_index);
 					options.set(index, Element.EMPTY);
 					break;
 				}
@@ -124,13 +130,16 @@ public class Grid {
 			}
 		index = 0;
 		while(index < options.size()){
-				for(int col_index = i-length_north+2; col_index < i+length_south+1; col_index++)
+				for(int col_index = i-length_north; col_index < i+length_south; col_index++)
 					if(isCompleteSequence(elements[col_index][j], elements[col_index-1][j], elements[col_index-2][j])){
 						options.set(index, Element.EMPTY);
 						break;
 					}
 			index++;
 		}
+		
+		for(Integer el: options)
+			System.out.println(el);
 			
 		return options;
 	}
@@ -147,7 +156,6 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>fillRow</h1>
 	 * Fills the specified row with random elements.
 	 * @param r This is the row which will be filled.
 	 * @return void
@@ -166,7 +174,6 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>fillRow</h1>
 	 * Fills the specified row with the elements of specified type.
 	 * @param r This is the row which will be filled.
 	 * @param t This is the type of element with which the row will be filled. For the possible types,
@@ -203,7 +210,6 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>fillCol</h1>
 	 * Fills the specified column with random elements.
 	 * @param c This is the column which will be filled.
 	 * @return void
@@ -223,7 +229,6 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>fillCol</h1>
 	 * Fills the specified column with the elements of specified type.
 	 * @param r This is the column which will be filled.
 	 * @param t This is the type of element with which the column will be filled. For the possible types,
@@ -260,8 +265,7 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>reassign</h1>
-	 * Shuffles the grid.
+	 * Method that shuffles the grid.
 	 * <p>
 	 * @return void
 	 * @see Element, Collections
@@ -285,7 +289,6 @@ public class Grid {
 	}
 
 	/**
-	 * <h1>generateElement</h1>
 	 * Creates and returns the element of a random type.
 	 * @param x this is the row index for which element will be generated.
 	 * @param y this is the column index for which element will be generated.
@@ -318,7 +321,6 @@ public class Grid {
 	}
 	
 	/**
-	 * <h1>generateElement</h1>
 	 * Creates and returns the element of a specified type.
 	 * @param x this is the row index for which element will be generated.
 	 * @param y this is the column index for which element will be generated.
@@ -871,10 +873,18 @@ public class Grid {
 		}
 	}
 
+	/**
+	 * A getter method for the score.
+	 * @return int returns the score.
+	 */
 	public int getScore() {
 		return score;
 	}
 
+	/**
+	 * A setter method for the score.
+	 * @param s int 
+	 */
 	public void setScore(int s) {
 		score = s;
 	}
